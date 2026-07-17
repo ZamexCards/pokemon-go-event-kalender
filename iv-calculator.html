@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Bereken mogelijke IV's, level en PvP-geschiktheid voor Pokémon GO.">
+  <title>ZamexGO IV Calculator</title>
+  <style>
+    :root{--green:#38b86a;--green2:#16894b;--blue:#178dd1;--navy:#123a57;--ink:#173042;--muted:#688191;--bg:#eef8f6;--card:#fff;--line:#d8e9e7;--gold:#ffbf3f;--bad:#e95757;--shadow:0 14px 38px rgba(18,58,87,.13)}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 0,#d9f7e6 0,transparent 35%),linear-gradient(145deg,#f6fbff,#ebf8f3);min-height:100vh}
+    .top{background:linear-gradient(120deg,var(--navy),#145a7d 55%,var(--green2));color:#fff;padding:30px 18px 58px;position:relative;overflow:hidden}.top:after{content:"";position:absolute;width:280px;height:280px;border:50px solid rgba(255,255,255,.07);border-radius:50%;right:-70px;top:-100px}.hero{max-width:1120px;margin:auto;position:relative;z-index:1}.brand{display:flex;align-items:center;gap:13px;font-weight:900;letter-spacing:.3px}.ball{width:45px;height:45px;border:4px solid #fff;border-radius:50%;background:linear-gradient(#42c978 0 44%,#fff 44% 56%,#1a8fd0 56%);position:relative;box-shadow:0 5px 15px #102f4866}.ball:after{content:"";position:absolute;width:10px;height:10px;background:#fff;border:3px solid var(--navy);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}h1{font-size:clamp(28px,5vw,48px);margin:26px 0 8px;line-height:1.04}.lead{max-width:690px;margin:0;color:#e7f7ff;font-size:17px;line-height:1.6}
+    main{max-width:1120px;margin:-32px auto 55px;padding:0 18px;position:relative;z-index:2}.panel{background:var(--card);border:1px solid #ffffff;border-radius:22px;box-shadow:var(--shadow);padding:24px}.status{display:flex;align-items:center;gap:9px;background:#eaf8ef;color:#13723e;border:1px solid #c5ead3;border-radius:11px;padding:10px 13px;margin-bottom:20px;font-size:14px}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #38b86a22}.dot.loading{animation:pulse 1s infinite}.dot.error{background:var(--bad);box-shadow:0 0 0 4px #e9575722}@keyframes pulse{50%{opacity:.35}}
+    .entry-layout{display:grid;grid-template-columns:190px 1fr;gap:22px;align-items:center}.poke-preview{height:190px;border-radius:18px;background:radial-gradient(circle,#fff 25%,#e5f7ef 70%);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.poke-preview img{width:165px;height:165px;object-fit:contain;filter:drop-shadow(0 10px 9px rgba(18,58,87,.18));display:none}.poke-preview .placeholder{text-align:center;color:var(--muted);font-size:13px;font-weight:700;padding:20px}.poke-preview .poke-name{position:absolute;left:8px;right:8px;bottom:7px;text-align:center;font-size:12px;font-weight:900;color:var(--navy);background:#ffffffd9;border-radius:8px;padding:5px;display:none}.formgrid{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:16px}.field label{display:block;font-size:13px;font-weight:800;margin:0 0 7px;color:#345568}.field input,.field select{width:100%;height:48px;border:1px solid var(--line);border-radius:11px;padding:0 13px;background:#fbfefe;color:var(--ink);font-size:16px;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #178dd119}.hint{font-size:12px;color:var(--muted);margin-top:6px}.appraise{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}.appraise-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.appraise h2{font-size:17px;margin:0}.optional{font-size:12px;color:var(--muted);font-weight:600}.ivgrid{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:16px;margin-top:14px;align-items:end}.check{height:48px;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}.check input{width:18px;height:18px;accent-color:var(--green)}button{border:0;border-radius:12px;background:linear-gradient(120deg,var(--green2),var(--green));color:#fff;font-size:16px;font-weight:900;padding:15px 24px;cursor:pointer;box-shadow:0 8px 18px #16894b35;transition:.18s}button:hover{transform:translateY(-1px);filter:brightness(1.03)}button:disabled{opacity:.5;cursor:not-allowed;transform:none}.calculate{width:100%;margin-top:22px}.message{margin-top:18px;border-radius:12px;padding:13px 15px;background:#fff5da;border:1px solid #f6d47e;color:#76530c;display:none}
+    #results{display:none;margin-top:22px}.result-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}.result-head h2{margin:0;font-size:25px}.count{font-size:13px;color:var(--muted)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.tile{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:0 7px 20px rgba(18,58,87,.06)}.tile .label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px}.tile .big{font-size:25px;font-weight:950;margin-top:7px}.perfect{color:var(--green2)}.league-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}.league{position:relative;overflow:hidden}.league:before{content:"";position:absolute;width:75px;height:75px;border-radius:50%;right:-20px;top:-20px;background:#178dd10d}.league h3{font-size:17px;margin:0 0 14px}.rank{font-size:27px;font-weight:950}.bar{height:8px;background:#e7efef;border-radius:99px;overflow:hidden;margin:10px 0}.bar span{height:100%;display:block;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--green))}.small{font-size:12px;color:var(--muted);line-height:1.5}.table-card{margin-top:14px;padding:0;overflow:hidden}.table-title{padding:18px 18px 10px;margin:0;font-size:17px}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:left;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}th{background:#f6fbfb;font-size:12px;text-transform:uppercase;color:#58717e}tr:first-child td{background:#effaf3;font-weight:700}.badge{display:inline-block;border-radius:99px;padding:4px 8px;background:#e8f4fb;color:#1675aa;font-weight:800;font-size:12px}.footnote{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.6;text-align:center}
+    @media(max-width:820px){.entry-layout{grid-template-columns:1fr}.poke-preview{height:165px}.poke-preview img{width:145px;height:145px}.formgrid{grid-template-columns:1fr 1fr}.formgrid .pokemon{grid-column:1/-1}.ivgrid{grid-template-columns:repeat(3,1fr)}.check{grid-column:1/-1}.summary{grid-template-columns:1fr 1fr}.league-wrap{grid-template-columns:1fr}.top{padding-top:22px}.panel{padding:19px}}
+    @media(max-width:520px){.formgrid,.ivgrid{grid-template-columns:1fr}.pokemon,.check{grid-column:auto}.summary{grid-template-columns:1fr 1fr}.summary .tile{padding:14px}.tile .big{font-size:20px}.appraise-head,.result-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header class="top"><div class="hero"><div class="brand"><span class="ball"></span><span>ZamexGO</span></div><h1>Pokémon GO IV Calculator</h1><p class="lead">Ontdek de mogelijke IV's, het Pokémon-level en de geschiktheid voor Great, Ultra en Master League.</p></div></header>
+  <main>
+    <section class="panel">
+      <div class="status" id="status"><span class="dot loading"></span><span>Actuele Pokémon-data laden…</span></div>
+      <div class="entry-layout"><div class="poke-preview"><div class="placeholder" id="previewPlaceholder">Kies een Pokémon om de afbeelding te bekijken</div><img id="pokemonImage" alt="Geselecteerde Pokémon"><div class="poke-name" id="previewName"></div></div><div class="formgrid">
+        <div class="field pokemon"><label for="pokemon">Pokémon</label><select id="pokemon" disabled><option>Even geduld…</option></select></div>
+        <div class="field"><label for="cp">Huidige CP</label><input id="cp" type="number" min="10" inputmode="numeric" placeholder="bijv. 1478"></div>
+        <div class="field"><label for="hp">Huidige HP</label><input id="hp" type="number" min="10" inputmode="numeric" placeholder="bijv. 126"></div>
+        <div class="field"><label for="dust">Stardust per power-up</label><select id="dust"><option value="">Kies kosten</option></select><div class="hint">Het bedrag dat nu bij Power Up staat.</div></div>
+      </div></div>
+      <div class="appraise">
+        <div class="appraise-head"><h2>Appraisal verfijnen</h2><span class="optional">Optioneel – voor een exactere uitkomst</span></div>
+        <div class="ivgrid">
+          <div class="field"><label for="atk">Aanval</label><select id="atk"><option value="">Onbekend</option></select></div>
+          <div class="field"><label for="def">Verdediging</label><select id="def"><option value="">Onbekend</option></select></div>
+          <div class="field"><label for="sta">HP-IV</label><select id="sta"><option value="">Onbekend</option></select></div>
+          <label class="check"><input id="powered" type="checkbox"> Al eens powered-up</label>
+        </div>
+      </div>
+      <button class="calculate" id="calculate" disabled>Bereken mijn Pokémon</button>
+      <div class="message" id="message"></div>
+    </section>
+
+    <section id="results">
+      <div class="result-head"><h2 id="resultTitle">Resultaat</h2><span class="count" id="resultCount"></span></div>
+      <div class="summary">
+        <div class="tile"><div class="label">Beste IV</div><div class="big" id="bestIv">–</div></div>
+        <div class="tile"><div class="label">Perfect?</div><div class="big" id="perfect">–</div></div>
+        <div class="tile"><div class="label">Mogelijk level</div><div class="big" id="level">–</div></div>
+        <div class="tile"><div class="label">Mogelijkheden</div><div class="big" id="possibilities">–</div></div>
+      </div>
+      <div class="league-wrap">
+        <div class="tile league" id="greatCard"><h3>Great League</h3><div class="rank" id="greatRank">–</div><div class="bar"><span id="greatBar"></span></div><div class="small" id="greatInfo"></div></div>
+        <div class="tile league" id="ultraCard"><h3>Ultra League</h3><div class="rank" id="ultraRank">–</div><div class="bar"><span id="ultraBar"></span></div><div class="small" id="ultraInfo"></div></div>
+        <div class="tile league" id="masterCard"><h3>Master League</h3><div class="rank" id="masterRank">–</div><div class="bar"><span id="masterBar"></span></div><div class="small" id="masterInfo"></div></div>
+      </div>
+      <div class="tile table-card"><h3 class="table-title">Mogelijke IV-combinaties</h3><div class="scroll"><table><thead><tr><th>IV</th><th>Aanval</th><th>Verdediging</th><th>HP</th><th>Level</th><th>Great</th><th>Ultra</th><th>Master</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+      <p class="footnote">PvP-percentages vergelijken de stat-productwaarde met de beste IV-combinatie voor dezelfde Pokémon en league. Dit is geen team- of moveset-ranking. Pokémon GO en de Pokémon-namen zijn eigendom van hun respectieve rechthebbenden.</p>
+    </section>
+  </main>
+<script>
+(() => {
+  'use strict';
+  const API='https://pogoapi.net/api/v1/';
+  const $=id=>document.getElementById(id);
+  const els={status:$('status'),pokemon:$('pokemon'),pokemonImage:$('pokemonImage'),previewName:$('previewName'),previewPlaceholder:$('previewPlaceholder'),cp:$('cp'),hp:$('hp'),dust:$('dust'),atk:$('atk'),def:$('def'),sta:$('sta'),powered:$('powered'),calculate:$('calculate'),message:$('message'),results:$('results')};
+  let species=[], multipliers=[];
+  const dustLevels={200:[1,1.5,2,2.5],400:[3,3.5,4,4.5],600:[5,5.5,6,6.5],800:[7,7.5,8,8.5],1000:[9,9.5,10,10.5],1300:[11,11.5,12,12.5],1600:[13,13.5,14,14.5],1900:[15,15.5,16,16.5],2200:[17,17.5,18,18.5],2500:[19,19.5,20,20.5],3000:[21,21.5,22,22.5],3500:[23,23.5,24,24.5],4000:[25,25.5,26,26.5],4500:[27,27.5,28,28.5],5000:[29,29.5,30,30.5],6000:[31,31.5,32,32.5],7000:[33,33.5,34,34.5],8000:[35,35.5,36,36.5],9000:[37,37.5,38,38.5],10000:[39,39.5,40,40.5],11000:[41,41.5,42,42.5],12000:[43,43.5,44,44.5],13000:[45,45.5,46,46.5],14000:[47,47.5,48,48.5],15000:[49,49.5]};
+  Object.keys(dustLevels).forEach(v=>els.dust.add(new Option(Number(v).toLocaleString('nl-NL')+' Stardust',v)));
+  for(let i=0;i<=15;i++){['atk','def','sta'].forEach(k=>els[k].add(new Option(i+'/15',i)))}
+  function setStatus(text,type='ok'){els.status.innerHTML=`<span class="dot ${type==='loading'?'loading':type==='error'?'error':''}"></span><span>${text}</span>`}
+  function normStat(p,key){return Number(p[key]??p[key.replace('base_','base') ]??0)}
+  function nameOf(p){const f=(p.form||p.form_name||'Normal');return p.pokemon_name||p.name||('Pokémon #'+(p.pokemon_id||p.id))+(f&&f!=='Normal'?' ('+f+')':'')}
+  async function load(){
+    try{
+      const [s,m]=await Promise.all([fetch(API+'pokemon_stats.json').then(r=>{if(!r.ok)throw Error();return r.json()}),fetch(API+'cp_multiplier.json').then(r=>{if(!r.ok)throw Error();return r.json()})]);
+      species=s.map((p,i)=>({id:Number(p.pokemon_id??p.id??i+1),name:nameOf(p),atk:normStat(p,'base_attack'),def:normStat(p,'base_defense'),sta:normStat(p,'base_stamina'),form:p.form||'Normal'})).filter(p=>p.atk&&p.def&&p.sta).sort((a,b)=>a.id-b.id||a.name.localeCompare(b.name));
+      multipliers=m.map(x=>({level:Number(x.level),mult:Number(x.multiplier)})).filter(x=>x.level<=50&&x.mult);
+      for(let level=45.5;level<=50;level+=.5)if(!multipliers.some(x=>x.level===level))multipliers.push({level,mult:.81529999+(level-45)*.005});
+      multipliers.sort((a,b)=>a.level-b.level);
+      els.pokemon.innerHTML='<option value="">Zoek en kies een Pokémon</option>'+species.map((p,i)=>`<option value="${i}">#${String(p.id).padStart(4,'0')} – ${escapeHtml(p.name)}</option>`).join('');
+      els.pokemon.disabled=false;els.calculate.disabled=false;setStatus(`Actuele data geladen: ${species.length} Pokémon-vormen`);
+    }catch(e){setStatus('Live data kon niet worden geladen. Controleer de internetverbinding en vernieuw de pagina.','error');showMessage('Deze calculator heeft bij de eerste keer openen internet nodig om de actuele Pokémon GO-data te laden.')}
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+  function cpOf(p,a,d,h,m){return Math.max(10,Math.floor((p.atk+a)*Math.sqrt(p.def+d)*Math.sqrt(p.sta+h)*m*m/10))}
+  function hpOf(p,h,m){return Math.max(10,Math.floor((p.sta+h)*m))}
+  function allowedIV(el){return el.value===''?[...Array(16).keys()]:[Number(el.value)]}
+  function showMessage(t){els.message.textContent=t;els.message.style.display='block'}
+  function hideMessage(){els.message.style.display='none'}
+  function combinationsFor(p,cp,hp,levels){
+    const out=[];const atk=allowedIV(els.atk),def=allowedIV(els.def),sta=allowedIV(els.sta);
+    for(const lv of levels){const mm=multipliers.find(x=>x.level===lv);if(!mm)continue;for(const a of atk)for(const d of def)for(const h of sta){if(cpOf(p,a,d,h,mm.mult)===cp&&hpOf(p,h,mm.mult)===hp)out.push({a,d,h,level:lv,iv:(a+d+h)/45*100})}}
+    return out.sort((x,y)=>y.iv-x.iv||y.level-x.level);
+  }
+  function leagueScore(p,a,d,h,limit){
+    let best=null;
+    for(const x of multipliers){const cp=cpOf(p,a,d,h,x.mult);if(limit&&cp>limit)break;const attack=(p.atk+a)*x.mult,defense=(p.def+d)*x.mult,hp=hpOf(p,h,x.mult),product=attack*defense*hp;if(!best||product>best.product)best={product,cp,level:x.level}}
+    return best;
+  }
+  function leagueMaximum(p,limit){
+    let best={product:0};for(let a=0;a<=15;a++)for(let d=0;d<=15;d++)for(let h=0;h<=15;h++){const s=leagueScore(p,a,d,h,limit);if(s&&s.product>best.product)best={...s,a,d,h}}
+    return best;
+  }
+  function scoreSet(p,c,max){
+    const limits=[1500,2500,null];
+    return limits.map((l,i)=>{const s=leagueScore(p,c.a,c.d,c.h,l);return s?{...s,pct:s.product/max[i].product*100,max:max[i]}:null});
+  }
+  function grade(pct){return pct>=99?'Uitstekend':pct>=97?'Zeer goed':pct>=94?'Goed':pct>=90?'Redelijk':'Laag'}
+  function renderLeague(prefix,s,limit){const pct=s?.pct||0;$(prefix+'Rank').textContent=s?`${pct.toFixed(2)}%`:'Niet geschikt';$(prefix+'Bar').style.width=pct+'%';$(prefix+'Info').innerHTML=s?`${grade(pct)}<br>Beste CP: <b>${s.cp}</b> op level ${s.level}<br>Beste IV voor deze soort: ${s.max.a}/${s.max.d}/${s.max.h}`:`Deze Pokémon past niet onder de CP-limiet.`}
+  function calculate(){
+    hideMessage();const idx=els.pokemon.value,cp=Number(els.cp.value),hp=Number(els.hp.value),dust=els.dust.value;
+    if(idx===''||!cp||!hp||!dust){showMessage('Vul eerst de Pokémon, CP, HP en Stardustkosten volledig in.');return}
+    const p=species[Number(idx)];let levels=[...dustLevels[dust]];
+    if(els.powered.checked)levels=levels.filter(x=>x%1===0||x%1===.5);
+    const combos=combinationsFor(p,cp,hp,levels);
+    if(!combos.length){els.results.style.display='none';showMessage('Geen combinatie gevonden. Controleer CP, HP, Stardust en de appraisalwaarden. Zet “al eens powered-up” alleen aan als dat zeker is.');return}
+    els.calculate.disabled=true;els.calculate.textContent='PvP-resultaten berekenen…';setTimeout(()=>{
+      const leagueMax=[1500,2500,null].map(l=>leagueMaximum(p,l));const enriched=combos.map(c=>({...c,scores:scoreSet(p,c,leagueMax)}));const best=enriched[0],mins=Math.min(...enriched.map(x=>x.level)),maxs=Math.max(...enriched.map(x=>x.level)),hasPerfect=enriched.some(x=>x.iv===100);
+      $('resultTitle').textContent=p.name;$('resultCount').textContent=`CP ${cp} • HP ${hp}`;$('bestIv').textContent=best.iv.toFixed(1)+'%';$('perfect').textContent=hasPerfect?'Ja!':'Nee';$('perfect').className='big '+(hasPerfect?'perfect':'');$('level').textContent=mins===maxs?mins:`${mins}–${maxs}`;$('possibilities').textContent=enriched.length;
+      renderLeague('great',best.scores[0],1500);renderLeague('ultra',best.scores[1],2500);renderLeague('master',best.scores[2],null);
+      $('rows').innerHTML=enriched.slice(0,100).map((c,i)=>`<tr><td>${c.iv.toFixed(1)}% ${c.iv===100?'<span class="badge">Perfect</span>':''}</td><td>${c.a}/15</td><td>${c.d}/15</td><td>${c.h}/15</td><td>${c.level}</td><td>${c.scores[0]?.pct.toFixed(2)||'–'}%</td><td>${c.scores[1]?.pct.toFixed(2)||'–'}%</td><td>${c.scores[2]?.pct.toFixed(2)||'–'}%</td></tr>`).join('');
+      els.results.style.display='block';els.results.scrollIntoView({behavior:'smooth',block:'start'});els.calculate.disabled=false;els.calculate.textContent='Bereken mijn Pokémon';
+    },30)
+  }
+  function updateImage(){
+    if(els.pokemon.value===''){els.pokemonImage.style.display='none';els.previewName.style.display='none';els.previewPlaceholder.style.display='block';return}
+    const p=species[Number(els.pokemon.value)];els.previewPlaceholder.style.display='none';els.previewName.textContent=p.name;els.previewName.style.display='block';els.pokemonImage.style.display='block';
+    els.pokemonImage.onerror=()=>{els.pokemonImage.onerror=null;els.pokemonImage.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`};
+    els.pokemonImage.src=`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p.id}.png`;
+  }
+  els.pokemon.addEventListener('change',updateImage);els.calculate.addEventListener('click',calculate);load();
+})();
+</script>
+</body>
+</html>
