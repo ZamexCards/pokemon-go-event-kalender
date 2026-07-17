@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ZamexCards Pokémon GO Event Kalender</title>
+  <style>
+    :root{--green:#27a94f;--green2:#16833b;--blue:#178bd3;--navy:#12334a;--pale:#eff9f5;--line:#d9e8e2;--text:#173042;--muted:#647884;--white:#fff;--shadow:0 10px 28px rgba(18,51,74,.11)}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#eefaf4,#edf7fc);font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+    .go-app{width:min(1180px,100%);margin:auto;padding:22px}.hero{position:relative;overflow:hidden;border-radius:24px;padding:28px;color:#fff;background:linear-gradient(125deg,var(--green2),var(--blue));box-shadow:var(--shadow)}
+    .hero:after{content:"";position:absolute;width:260px;height:260px;border:30px solid rgba(255,255,255,.1);border-radius:50%;right:-80px;top:-105px}.eyebrow{font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;opacity:.9}
+    h1{font-size:clamp(27px,5vw,47px);line-height:1.05;margin:8px 0}.hero p{max-width:690px;margin:0;line-height:1.55;font-size:16px}.live{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:rgba(255,255,255,.16);padding:9px 13px;border-radius:99px;font-size:13px}.dot{width:9px;height:9px;background:#9cff95;border-radius:50%;box-shadow:0 0 0 5px rgba(156,255,149,.16)}
+    .toolbar{margin:18px 0;display:grid;grid-template-columns:1fr auto;gap:12px;background:#fff;padding:14px;border-radius:18px;box-shadow:var(--shadow)}.search{position:relative}.search input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px 13px 42px;font-size:16px;color:var(--text)}.search span{position:absolute;left:15px;top:12px;font-size:19px}.refresh{border:0;border-radius:12px;padding:0 18px;font-weight:800;color:#fff;background:var(--blue);cursor:pointer}.refresh:disabled{opacity:.55}
+    .filters{display:flex;gap:9px;overflow:auto;padding:2px 0 13px;scrollbar-width:thin}.filter{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:99px;padding:10px 14px;font-weight:700;cursor:pointer}.filter.active{background:var(--green);border-color:var(--green);color:#fff}
+    .summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 2px 14px}.summary strong{font-size:18px}.updated{font-size:12px;color:var(--muted);text-align:right}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(217,232,226,.7);display:flex;flex-direction:column;min-width:0}.visual{height:155px;background:linear-gradient(135deg,#dff6e8,#e1f3ff);position:relative;overflow:hidden}.visual img{width:100%;height:100%;object-fit:cover}.badge{position:absolute;left:12px;top:12px;background:rgba(18,51,74,.9);color:#fff;border-radius:99px;padding:7px 10px;font-size:11px;font-weight:800}.body{padding:16px;display:flex;flex:1;flex-direction:column}.body h2{font-size:19px;line-height:1.25;margin:0 0 11px}.date{display:grid;grid-template-columns:26px 1fr;gap:8px;line-height:1.45;font-size:14px}.countdown{margin-top:15px;padding:12px;border-radius:12px;background:var(--pale);color:var(--green2);font-weight:800;text-align:center}.active-now{background:#e8f4ff;color:#0874ba}.link{display:block;margin-top:12px;color:var(--blue);font-weight:800;text-decoration:none;font-size:13px}.state{grid-column:1/-1;background:#fff;border-radius:18px;padding:38px;text-align:center;box-shadow:var(--shadow)}.spinner{width:38px;height:38px;border:4px solid #dbeee5;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}@keyframes spin{to{transform:rotate(360deg)}}
+    footer{text-align:center;color:var(--muted);font-size:12px;line-height:1.5;padding:28px 10px 8px}footer a{color:var(--blue)}
+    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.go-app{padding:11px}.hero{border-radius:18px;padding:22px 18px}.toolbar{grid-template-columns:1fr}.refresh{height:44px}.grid{grid-template-columns:1fr}.visual{height:175px}.summary{align-items:flex-start;flex-direction:column}.updated{text-align:left}}
+  </style>
+</head>
+<body>
+<main class="go-app">
+  <section class="hero">
+    <div class="eyebrow">ZamexCards.nl</div>
+    <h1>Pokémon GO<br>Event Kalender</h1>
+    <p>Bekijk actuele en aankomende Community Days, Raid Hours, Spotlight Hours, GO Fests, Research Days en Collection Challenges.</p>
+    <div class="live"><span class="dot"></span><span id="liveText">Live evenementen worden geladen…</span></div>
+  </section>
+  <section class="toolbar">
+    <label class="search"><span>🔎</span><input id="search" type="search" placeholder="Zoek een evenement…" autocomplete="off"></label>
+    <button class="refresh" id="refresh" type="button">↻ Vernieuwen</button>
+  </section>
+  <nav class="filters" id="filters" aria-label="Filter evenementen"></nav>
+  <div class="summary"><strong id="resultCount">Evenementen laden…</strong><span class="updated" id="updated"></span></div>
+  <section class="grid" id="events"><div class="state"><div class="spinner"></div>Nieuwste evenementen ophalen…</div></section>
+  <footer>Evenementgegevens via <a href="https://github.com/bigfoott/ScrapedDuck" target="_blank" rel="noopener">ScrapedDuck</a> en <a href="https://leekduck.com/events/" target="_blank" rel="noopener">Leek Duck</a>.<br>Niet officieel verbonden aan Pokémon GO, Niantic, Nintendo of The Pokémon Company.</footer>
+</main>
+<script>
+(function(){
+  'use strict';
+  const SOURCES=['https://cdn.jsdelivr.net/gh/bigfoott/ScrapedDuck@data/events.json','https://raw.githubusercontent.com/bigfoott/ScrapedDuck/data/events.json'];
+  const CACHE='zamexcards_go_events_v2', MAX_AGE=86400000;
+  const groups=[
+    {id:'all',label:'Alles',icon:'🗓️'},
+    {id:'community',label:'Community Days',icon:'👥',types:['community-day','community-day-classic'],words:['community day']},
+    {id:'raid',label:'Raid Hours',icon:'🥚',types:['raid-hour'],words:['raid hour']},
+    {id:'spotlight',label:'Spotlight Hour',icon:'✨',types:['pokemon-spotlight-hour','spotlight-hour'],words:['spotlight hour']},
+    {id:'fest',label:'GO Fest',icon:'🎉',types:['pokemon-go-fest','live-event'],words:['go fest']},
+    {id:'research',label:'Research Days',icon:'🔬',types:['research'],words:['research day','research event']},
+    {id:'collection',label:'Collection Challenges',icon:'🏅',types:['collection-challenge'],words:['collection challenge']}
+  ];
+  let all=[],active='all';
+  const $=s=>document.querySelector(s), esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function groupFor(e){const t=(e.eventType||e.type||'').toLowerCase(),n=(e.name||e.heading||'').toLowerCase();return groups.slice(1).find(g=>(g.types||[]).includes(t)||(g.words||[]).some(w=>n.includes(w)))?.id||'other'}
+  function filters(){ $('#filters').innerHTML=groups.map(g=>`<button class="filter ${g.id===active?'active':''}" data-id="${g.id}">${g.icon} ${g.label}</button>`).join(''); }
+  function dt(value){if(!value)return null;const d=new Date(value);return isNaN(d)?null:d}
+  function dateLine(e){const s=dt(e.start),en=dt(e.end);if(!s)return 'Tijd wordt nog bekendgemaakt';const f=new Intl.DateTimeFormat('nl-NL',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});return en?`${f.format(s)} – ${f.format(en)}`:f.format(s)}
+  function remaining(e){const now=Date.now(),s=dt(e.start)?.getTime(),en=dt(e.end)?.getTime();if(!s)return {text:'Datum volgt',live:false};let target=s,prefix='Start over',live=false;if(now>=s&&(!en||now<en)){target=en;prefix='Bezig • nog';live=true}if(en&&now>=en)return {text:'Afgelopen',live:false};let x=Math.max(0,target-now),d=Math.floor(x/86400000);x%=86400000;let h=Math.floor(x/3600000);x%=3600000;let m=Math.floor(x/60000);let sec=Math.floor((x%60000)/1000);return {text:`${prefix} ${d?d+'d ':''}${String(h).padStart(2,'0')}u ${String(m).padStart(2,'0')}m ${String(sec).padStart(2,'0')}s`,live}}
+  function card(e){const g=groups.find(x=>x.id===groupFor(e)),r=remaining(e),name=e.name||e.heading||'Pokémon GO-evenement',img=e.image||e.imageUrl||e.image_url||'',link=e.link||e.url||'';return `<article class="card"><div class="visual">${img?`<img loading="lazy" src="${esc(img)}" alt="${esc(name)}" onerror="this.style.display='none'">`:''}<span class="badge">${g?g.icon+' '+esc(g.label):'🎮 Evenement'}</span></div><div class="body"><h2>${esc(name)}</h2><div class="date"><span>📅</span><span>${esc(dateLine(e))}<br><small>Lokale tijd (Nederland)</small></span></div><div class="countdown ${r.live?'active-now':''}">${esc(r.text)}</div>${link?`<a class="link" href="${esc(link)}" target="_blank" rel="noopener">Bekijk alle details →</a>`:''}</div></article>`}
+  function render(){const q=$('#search').value.trim().toLowerCase(),now=Date.now();let list=all.filter(e=>{const end=dt(e.end)?.getTime(),start=dt(e.start)?.getTime();return (!end||end>now-3600000)&&(!start||start<now+31536000000)}).filter(e=>active==='all'||groupFor(e)===active).filter(e=>!q||(e.name||e.heading||'').toLowerCase().includes(q)).sort((a,b)=>(dt(a.start)||Infinity)-(dt(b.start)||Infinity));$('#resultCount').textContent=`${list.length} ${list.length===1?'evenement':'evenementen'}`;$('#liveText').textContent=all.some(e=>remaining(e).live)?'Er is nu een evenement bezig':'Automatisch bijgewerkt met de nieuwste informatie';$('#events').innerHTML=list.length?list.map(card).join(''):'<div class="state">Geen evenementen gevonden met dit filter.</div>'}
+  async function fetchEvents(force){$('#refresh').disabled=true;$('#refresh').textContent='Bezig…';let cached;try{cached=JSON.parse(localStorage.getItem(CACHE)||'null')}catch(e){}if(!force&&cached&&Date.now()-cached.saved<MAX_AGE){all=cached.data;showTime(cached.saved,true);finish();return}let error;for(const url of SOURCES){try{const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!Array.isArray(data))throw Error('Ongeldige gegevens');all=data;const saved=Date.now();localStorage.setItem(CACHE,JSON.stringify({saved,data}));showTime(saved,false);finish();return}catch(e){error=e}}if(cached?.data?.length){all=cached.data;showTime(cached.saved,true);finish()}else{$('#events').innerHTML='<div class="state"><strong>De evenementen konden niet worden geladen.</strong><br><br>Controleer je internetverbinding of probeer het later opnieuw.</div>';$('#resultCount').textContent='Geen verbinding';$('#refresh').disabled=false;$('#refresh').textContent='↻ Opnieuw proberen';console.warn(error)}}
+  function showTime(t,cache){$('#updated').textContent=`${cache?'Reservegegevens':'Bijgewerkt'}: ${new Intl.DateTimeFormat('nl-NL',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(t))}`}
+  function finish(){$('#refresh').disabled=false;$('#refresh').textContent='↻ Vernieuwen';render()}
+  $('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b)return;active=b.dataset.id;filters();render()});$('#search').addEventListener('input',render);$('#refresh').addEventListener('click',()=>fetchEvents(true));filters();fetchEvents(false);setInterval(render,1000);
+})();
+</script>
+</body>
+</html>
